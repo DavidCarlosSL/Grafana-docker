@@ -1,0 +1,38 @@
+version: "3.9"
+
+services:
+  prometheus:
+    build: 
+      context: ./prometheus
+      dockerfile: Dockerfile
+    container_name: prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/etc/prometheus/container_prometheus_data'
+    volumes: 
+      - prometheus_data:/etc/prometheus/container_prometheus_data
+    restart: unless-stopped
+    ports:
+      - 9090:9090
+    
+  jenkins:
+    image: jenkins/jenkins:lts-jdk11
+    container_name: jenkins
+    ports: 
+      - 8080:8080
+      - 50000:50000
+    volumes: 
+      - jenkins_home:/var/jenkins_home
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports: 
+      - 3000:3000
+    volumes: 
+      - grafana-storage:/var/lib/grafana grafana/grafana
+
+volumes: 
+  prometheus_data:
+  jenkins_home:
+  grafana-storage:
