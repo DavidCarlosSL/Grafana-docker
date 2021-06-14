@@ -14,15 +14,9 @@ services:
     restart: unless-stopped
     ports:
       - 9090:9090
-    
-  jenkins:
-    image: jenkins/jenkins:lts-jdk11
-    container_name: jenkins
-    ports: 
-      - 8080:8080
-      - 50000:50000
-    volumes: 
-      - jenkins_home:/var/jenkins_home
+    networks: 
+      - monitoring_network
+      - jenkins_network
 
   grafana:
     image: grafana/grafana:latest
@@ -31,8 +25,14 @@ services:
       - 3000:3000
     volumes: 
       - grafana-storage:/var/lib/grafana grafana/grafana
+    networks: 
+      - monitoring_network
+      - jenkins_network
 
 volumes: 
   prometheus_data:
-  jenkins_home:
   grafana-storage:
+
+networks: 
+  monitoring_network:
+  jenkins_network:
